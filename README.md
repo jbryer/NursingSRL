@@ -5,8 +5,8 @@
 Authors:
 
 * Laurie Nagelsmith, Ph.D., R.N.
-* Jason Bryer, Ph.D. (jason@bryer.org)
-* Zheng Yan, Ed.D.
+* [Jason Bryer, Ph.D.](http://jason.bryer.org) (jason@bryer.org)
+* [Zheng Yan, Ed.D.](http://www.albany.edu/educational_psychology/yan.php)
 
 Contents:
 
