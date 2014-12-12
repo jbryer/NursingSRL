@@ -1,0 +1,239 @@
+---
+title: "Reproducible Structural Equation Modeling"
+author: "Jason M. Bryer, Ph.D."
+date: "December 12, 2014"
+output: slidy_presentation
+---
+
+```{r setup, echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+library(gdata) # For loading Excel files
+library(lavaan)
+library(psych)
+library(semPlot)
+library(xtable)
+library(knitr)
+opts_chunk$set(comment=NA)
+opts_chunk$set(warning=FALSE)
+opts_chunk$set(message=FALSE)
+options(digits=2)
+```
+
+## Overview
+
+1. What is Reproducible Research
+1. Organizing Project
+2. Conducting SEM in R
+3. Sharing Research
+
+
+## Why Conduct Reproducible Research
+
+* For collaboration.
+* To share knowledge not only of findings but of the process.
+* Allow other researchers to verify results.
+* Create a library/community of data for other studies.
+* Avoid the embarrassment of Reinhart and Rogoff (see e.g. [Businessweek](http://www.businessweek.com/articles/2013-04-18/faq-reinhart-rogoff-and-the-excel-error-that-changed-history))
+
+### The tools used for this project:
+
+* [R](http://www.r-project.org), [RStudio](http://rstudio.com) and the [`lavaan`](http://lavaan.ugent.be/) package.
+* [Github](http://github.com)
+* [Open Science Framework](https://osf.io)
+
+
+
+## File Structure
+
+![Finder Screenshot](../Figures/FinderScreen.png)
+
+
+## Data Preparation
+
+The data for this example come from Nagelsmith, Bryer, and Yan (2012). It measures motivation, volitional control, and GPA for nursing students in an online college.
+
+```{r}
+srl <- read.xls('../Data/NursingSRL.xlsx', sheet=1)
+names(srl)
+```
+
+## Instruments
+
+Academic Volitional Strategies Inventory (AVSI) - 20 items measuring three factors:
+
+* Stress Reducing Actions
+* Negative-Based Incentives
+* Self-Efficacy Enhancement
+
+Motivated Strategies for Learning Questionnaire (MSLQ) - 31 items measuring six factors:
+
+* Intrinsic Goal Orientation
+* Task Value
+* Test Anxiety
+* Extrinsic Goal Orientation
+* Control of Learning Beliefs
+* Self-Efficacy
+
+## Analysis Outline
+
+1. Perform three confirmatory analyses
+	a. AVSI
+	b. MSLQ
+	c. Composite
+
+2. Estimate structural model predicting GPA
+
+## Defining Models
+
+Using `lavaan`, the model is specified as a character vector and for organizational purposes, saved to an external file. 
+
+
+```{r}
+source('../R/avsi.lavaan.R')
+source('../R/mslq.lavaan.R')
+source('../R/composite.lavaan.R')
+```
+
+The baseline model for the AVSI measure:
+
+```{r, echo=FALSE}
+cat(avsi.model0.lavaan)
+```
+
+## AVSI CFA Model
+
+The `cfa` function will conduct the confirmatory factor analysis and `summary` function prints all the output.
+
+```{r}
+avsi.fit0 <- lavaan::cfa(avsi.model0.lavaan, data=srl)
+summary(avsi.fit0, fit.measures=TRUE)
+```
+
+## AVSI CFA Model (cont.)
+
+```{r}
+semPaths(avsi.fit0, rotation=4, curvePivot=TRUE)
+title('AVSI CFA Model', line=3)
+```
+
+## Estimating More Models
+
+For this study, we modified our models to achieve better fit. Model 2 is our final model in all cases.
+
+```{r, echo=TRUE, results='hide'}
+avsi.fit0 <- lavaan::cfa(avsi.model0.lavaan, data=srl)
+avsi.fit2 <- lavaan::cfa(avsi.model2.lavaan, data=srl)
+mslq.fit0 <- lavaan::cfa(mslq.model0.lavaan, data=srl)
+mslq.fit2 <- lavaan::cfa(mslq.model2.lavaan, data=srl)
+comp.fit0 <- lavaan::cfa(comp.model0.lavaan, data=srl)
+comp.fit2 <- lavaan::cfa(comp.model2.lavaan, data=srl)
+```
+
+## Modeling GPA
+
+One of our research goals is to understand the relationship between motivation and volition as predictors of GPA. The `sem` function will estimate the structural equation model.
+
+```{r}
+gpa.fit <- lavaan::sem(sem.model.lavaan, data=srl)
+summary(gpa.fit, fit.measures=TRUE)
+```
+
+## Model GPA (cont.)
+
+```{r}
+semPaths(gpa.fit, what='std', rotation=4, curvePivot=TRUE, title=FALSE)
+title('Path Model', line=3)
+```
+
+## Building Tables
+
+The `summary` function provides a large amount of information. For our final report we will want to limit the output to only the desired statistics. We can extract the fit statistics we wish to use and combine them into a single `data.frame`.
+
+```{r}
+fits <- c('chisq','df','TLI','CFI','RMSEA')
+fit.stats <- data.frame(
+	MSLQ0 = as.numeric(fitMeasures(comp.fit0, fits)),
+	MSLQ2 = as.numeric(fitMeasures(comp.fit2, fits)),
+	AVSI0 = as.numeric(fitMeasures(comp.fit2, fits)),
+	AVSI2 = as.numeric(fitMeasures(comp.fit2, fits)),
+	Comp0 = as.numeric(fitMeasures(comp.fit2, fits)),
+	Comp2 = as.numeric(fitMeasures(comp.fit2, fits)),
+	GPA   = as.numeric(fitMeasures(gpa.fit, fits))
+)
+row.names(fit.stats) <- fits
+fit.stats
+```
+
+## Results: Fit Statistics
+
+Using the `xtable` function, we can create a LaTeX or HTML table to include in our report.
+
+```{r}
+x <- xtable(fit.stats, label='fitstats',
+			caption='Model Fit Statistics for Confirmatory Factor Analysis')
+```
+
+```{r, echo=FALSE, results='asis'}
+print(x, type='html')
+```
+
+## Results: Path Coefficients
+
+We can also extract any path coefficients we are interested in.
+
+```{r}
+pe <- parameterEstimates(gpa.fit)
+pe[pe$lhs == 'gpa',]
+```
+
+## Warnings About SEM
+
+#### Model Fit
+
+There is not agreed upon threshold for determining good model fit but some guidelines are available (c.f. Hooper, Coughlan, & Mullen, 2008).
+
+#### Model fit versus Parsimony
+
+Most software (`lavaan` included) will provide modification indices that suggest modifications that can be made to increase model fit, although these will increase model fit, they also reduce the parsimony of the model.
+
+#### Making Causal Estimates
+
+> "I like to say is that in observational settings I feel I can interpret at most one variable causally. The difficulty is that it’s hard to control for things that happen after the variable that you’re thinking of as the 'treatment.'" Gelman (2009)
+
+http://andrewgelman.com/2009/09/09/why_am_i_skepti/
+
+## Sharing Results: Github
+
+http://github.com/jbryer/NursingSRL
+
+![Github Screenshot](../Figures/GithubScreen.png)
+
+## Sharing Results: Open Science Framework
+
+https://osf.io/g4xf9/
+
+![Open Science Framework Screenshot](../Figures/OSFScreen.png)
+
+
+## Thank You
+
+<br /><br /><br />
+
+### Jason Bryer, Ph.D. (jason@bryer.org, [www.bryer.org](http://www.bryer.org))
+
+* Github: http://github.com/jbryer/NursingSRL
+* Open Science Framework: https://osf.io/g4xf9/
+
+## References
+
+Hooper, D., Coughlan, J., & Mullen, M.R. (2008). Structural equation modeling: Guidelines for determining model fit. *The Electronic Journal of Business Research Methods, 6*(1), 53-60.
+
+Jöreskog, K., & Sörbom, D. (1993). *Lisrel 8: Structural Equation Modeling with the SIMPLIS Command Language.* Lincolnwood, IL: Scientific Software International, Inc.
+
+Nagelsmith, L., Bryer, J., & Yan, Z. (2012). Measuring motivation and volition of nursing students in nontraditional learning environments. *Journal of Nursing Measurement, 20*(2), 90-112.
+
+R Core Team (2014). R: A language and environment for statistical computing. R Foundation for Statistical Computing, Vienna, Austria.
+  
+Rosseel, Y. (2012). `lavaan`: An R package for structural equation modeling. *Journal of Statstical Software, 48*(2).
+
+Epskamp, S. (2014). `semPlot`: Path diagrams and visual analysis of various SEM packages' output. R package version 1.0.1.
+

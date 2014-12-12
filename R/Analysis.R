@@ -1,9 +1,9 @@
-# Install Packages
-# This is only necessary once per R installation.
-install.packages(c('gdata', 'lavaan','psych','semPlot','xtable'))
+# Install and Load Packages
+source('R/package.R')
+package(c('gdata','lavaan','psych','semPlot','xtable'))
 
 # Set the working directory
-setwd('~/Dropbox/Projects/SEM in R') # Set according to your system
+setwd('~/Dropbox/Projects/NursingSRL') # Set according to your system
 getwd()
 
 # Load Packages
@@ -45,33 +45,45 @@ source('R/composite.lavaan.R')
 #       V = Volition
 avsi.fit0 <- lavaan::cfa(avsi.model0.lavaan, data=srl)
 summary(avsi.fit0, fit.measures=TRUE)
+pdf('Figures/AVSIModel0.pdf')
 semPaths(avsi.fit0, rotation=4, curvePivot=TRUE)
 title('AVSI CFA Model', line=3)
+dev.off()
 
 avsi.fit2 <- lavaan::cfa(avsi.model2.lavaan, data=srl)
 summary(avsi.fit2, fit.measures=TRUE)
+pdf('Figures/AVSIModel2.pdf')
 semPaths(avsi.fit2, rotation=4, curvePivot=TRUE)
 title('AVSI CFA Model', line=3)
+dev.off()
 
 mslq.fit0 <- lavaan::cfa(mslq.model0.lavaan, data=srl)
 summary(mslq.fit0, fit.measures=TRUE)
+pdf('Figures/MSLQModel0.pdf')
 semPaths(mslq.fit0, rotation=4, curvePivot=TRUE)
 title('MSLQ CFA Model', line=3)
+dev.off()
 
 mslq.fit2 <- lavaan::cfa(mslq.model2.lavaan, data=srl)
 summary(mslq.fit2, fit.measures=TRUE)
+pdf('Figures/MSLQModel2.pdf')
 semPaths(mslq.fit2, rotation=4, curvePivot=TRUE)
 title('MSLQ CFA Model', line=3)
+dev.off()
 
 comp.fit0 <- lavaan::cfa(comp.model0.lavaan, data=srl)
 summary(comp.fit0, fit.measures=TRUE)
+pdf('Figures/CompositeModel0.pdf')
 semPaths(comp.fit0, rotation=4, curvePivot=TRUE)
 title('Composite CFA Model', line=3)
+dev.off()
 
 comp.fit2 <- lavaan::cfa(comp.model2.lavaan, data=srl)
 summary(comp.fit2, fit.measures=TRUE)
+pdf('Figures/CompositeModel2.pdf')
 semPaths(comp.fit2, rotation=4, curvePivot=TRUE, title=FALSE)
 title('Composite CFA Model', line=3)
+dev.off()
 
 # SEM: Predicting gpa from Motivation and Volition
 gpa.fit <- lavaan::sem(sem.model.lavaan, data=srl)
