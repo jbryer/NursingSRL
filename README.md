@@ -11,7 +11,7 @@ Authors:
 Contents:
 
 * [Paper](Document/Nagelsmith_Bryer_Yan.pdf)
-* [Slides](Slides/ReproducibleSEM.html)
+* [Reproducible SEM Slides](http://htmlpreview.github.io/?https://github.com/jbryer/NursingSRL/blob/master/Slides/ReproducibleSEM.html)
 * [AERA 2009 Slides](Slides/2009-04-15.SEM.AERA.pdf)
 * [Analysis Script in R](R/Analysis.R)[^1]
 
