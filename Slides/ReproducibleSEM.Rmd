@@ -29,7 +29,7 @@ options(digits=2)
 ## Why Conduct Reproducible Research
 
 * For collaboration.
-* To share knowledge not only of findings but of the process.
+* To share knowledge not only of findings but of the process (including "failed" studies).
 * Allow other researchers to verify results.
 * Create a library/community of data for other studies.
 * Avoid the embarrassment of Reinhart and Rogoff (see e.g. [Businessweek](http://www.businessweek.com/articles/2013-04-18/faq-reinhart-rogoff-and-the-excel-error-that-changed-history))
@@ -151,11 +151,11 @@ The `summary` function provides a large amount of information. For our final rep
 ```{r}
 fits <- c('chisq','df','TLI','CFI','RMSEA')
 fit.stats <- data.frame(
-	MSLQ0 = as.numeric(fitMeasures(comp.fit0, fits)),
-	MSLQ2 = as.numeric(fitMeasures(comp.fit2, fits)),
-	AVSI0 = as.numeric(fitMeasures(comp.fit2, fits)),
-	AVSI2 = as.numeric(fitMeasures(comp.fit2, fits)),
-	Comp0 = as.numeric(fitMeasures(comp.fit2, fits)),
+	MSLQ0 = as.numeric(fitMeasures(mslq.fit0, fits)),
+	MSLQ2 = as.numeric(fitMeasures(mslq.fit2, fits)),
+	AVSI0 = as.numeric(fitMeasures(avsi.fit0, fits)),
+	AVSI2 = as.numeric(fitMeasures(avsi.fit2, fits)),
+	Comp0 = as.numeric(fitMeasures(comp.fit0, fits)),
 	Comp2 = as.numeric(fitMeasures(comp.fit2, fits)),
 	GPA   = as.numeric(fitMeasures(gpa.fit, fits))
 )

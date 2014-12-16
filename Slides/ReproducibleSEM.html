@@ -52,7 +52,7 @@ Jason M. Bryer, Ph.D.
 <h1>Why Conduct Reproducible Research</h1>
 <ul>
 <li>For collaboration.</li>
-<li>To share knowledge not only of findings but of the process.</li>
+<li>To share knowledge not only of findings but of the process (including “failed” studies).</li>
 <li>Allow other researchers to verify results.</li>
 <li>Create a library/community of data for other studies.</li>
 <li>Avoid the embarrassment of Reinhart and Rogoff (see e.g. <a href="http://www.businessweek.com/articles/2013-04-18/faq-reinhart-rogoff-and-the-excel-error-that-changed-history">Businessweek</a>)</li>
@@ -365,22 +365,22 @@ Variances:
 <p>The <code>summary</code> function provides a large amount of information. For our final report we will want to limit the output to only the desired statistics. We can extract the fit statistics we wish to use and combine them into a single <code>data.frame</code>.</p>
 <pre class="sourceCode r"><code class="sourceCode r">fits &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">'chisq'</span>,<span class="st">'df'</span>,<span class="st">'TLI'</span>,<span class="st">'CFI'</span>,<span class="st">'RMSEA'</span>)
 fit.stats &lt;-<span class="st"> </span><span class="kw">data.frame</span>(
-    <span class="dt">MSLQ0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit0, fits)),
-    <span class="dt">MSLQ2 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit2, fits)),
-    <span class="dt">AVSI0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit2, fits)),
-    <span class="dt">AVSI2 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit2, fits)),
-    <span class="dt">Comp0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit2, fits)),
+    <span class="dt">MSLQ0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(mslq.fit0, fits)),
+    <span class="dt">MSLQ2 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(mslq.fit2, fits)),
+    <span class="dt">AVSI0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(avsi.fit0, fits)),
+    <span class="dt">AVSI2 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(avsi.fit2, fits)),
+    <span class="dt">Comp0 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit0, fits)),
     <span class="dt">Comp2 =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(comp.fit2, fits)),
     <span class="dt">GPA   =</span> <span class="kw">as.numeric</span>(<span class="kw">fitMeasures</span>(gpa.fit, fits))
 )
 <span class="kw">row.names</span>(fit.stats) &lt;-<span class="st"> </span>fits
 fit.stats</code></pre>
-<pre><code>       MSLQ0  MSLQ2  AVSI0  AVSI2  Comp0  Comp2    GPA
-chisq 306.15 24.186 24.186 24.186 24.186 24.186 38.532
-df     18.00 13.000 13.000 13.000 13.000 13.000 19.000
-TLI     0.39  0.967  0.967  0.967  0.967  0.967  0.951
-CFI     0.61  0.985  0.985  0.985  0.985  0.985  0.974
-RMSEA   0.23  0.054  0.054  0.054  0.054  0.054  0.059</code></pre>
+<pre><code>        MSLQ0   MSLQ2   AVSI0   AVSI2  Comp0  Comp2    GPA
+chisq 1.2e+03 815.799 550.975 357.068 306.15 24.186 38.532
+df    4.2e+02 399.000 167.000 154.000  18.00 13.000 19.000
+TLI   8.1e-01   0.894   0.702   0.829   0.39  0.967  0.951
+CFI   8.3e-01   0.909   0.738   0.861   0.61  0.985  0.974
+RMSEA 7.9e-02   0.059   0.088   0.067   0.23  0.054  0.059</code></pre>
 </div>
 <div id="results-fit-statistics" class="slide section level2">
 <h1>Results: Fit Statistics</h1>
@@ -388,7 +388,7 @@ RMSEA   0.23  0.054  0.054  0.054  0.054  0.054  0.059</code></pre>
 <pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">xtable</span>(fit.stats, <span class="dt">label=</span><span class="st">'fitstats'</span>,
             <span class="dt">caption=</span><span class="st">'Model Fit Statistics for Confirmatory Factor Analysis'</span>)</code></pre>
 <!-- html table generated in R 3.1.2 by xtable 1.7-4 package -->
-<!-- Fri Dec 12 14:34:56 2014 -->
+<!-- Fri Dec 12 16:05:05 2014 -->
 <table border="1">
 <caption align="bottom"> 
 Model Fit Statistics for Confirmatory Factor Analysis
@@ -411,15 +411,15 @@ GPA
   <tr> <td align="right"> 
 chisq
 </td> <td align="right"> 
+1202.90
+</td> <td align="right"> 
+815.80
+</td> <td align="right"> 
+550.97
+</td> <td align="right"> 
+357.07
+</td> <td align="right"> 
 306.15
-</td> <td align="right"> 
-24.19
-</td> <td align="right"> 
-24.19
-</td> <td align="right"> 
-24.19
-</td> <td align="right"> 
-24.19
 </td> <td align="right"> 
 24.19
 </td> <td align="right"> 
@@ -428,15 +428,15 @@ chisq
   <tr> <td align="right"> 
 df
 </td> <td align="right"> 
+419.00
+</td> <td align="right"> 
+399.00
+</td> <td align="right"> 
+167.00
+</td> <td align="right"> 
+154.00
+</td> <td align="right"> 
 18.00
-</td> <td align="right"> 
-13.00
-</td> <td align="right"> 
-13.00
-</td> <td align="right"> 
-13.00
-</td> <td align="right"> 
-13.00
 </td> <td align="right"> 
 13.00
 </td> <td align="right"> 
@@ -445,15 +445,15 @@ df
   <tr> <td align="right"> 
 TLI
 </td> <td align="right"> 
+0.81
+</td> <td align="right"> 
+0.89
+</td> <td align="right"> 
+0.70
+</td> <td align="right"> 
+0.83
+</td> <td align="right"> 
 0.39
-</td> <td align="right"> 
-0.97
-</td> <td align="right"> 
-0.97
-</td> <td align="right"> 
-0.97
-</td> <td align="right"> 
-0.97
 </td> <td align="right"> 
 0.97
 </td> <td align="right"> 
@@ -462,15 +462,15 @@ TLI
   <tr> <td align="right"> 
 CFI
 </td> <td align="right"> 
+0.83
+</td> <td align="right"> 
+0.91
+</td> <td align="right"> 
+0.74
+</td> <td align="right"> 
+0.86
+</td> <td align="right"> 
 0.61
-</td> <td align="right"> 
-0.98
-</td> <td align="right"> 
-0.98
-</td> <td align="right"> 
-0.98
-</td> <td align="right"> 
-0.98
 </td> <td align="right"> 
 0.98
 </td> <td align="right"> 
@@ -479,15 +479,15 @@ CFI
   <tr> <td align="right"> 
 RMSEA
 </td> <td align="right"> 
+0.08
+</td> <td align="right"> 
+0.06
+</td> <td align="right"> 
+0.09
+</td> <td align="right"> 
+0.07
+</td> <td align="right"> 
 0.23
-</td> <td align="right"> 
-0.05
-</td> <td align="right"> 
-0.05
-</td> <td align="right"> 
-0.05
-</td> <td align="right"> 
-0.05
 </td> <td align="right"> 
 0.05
 </td> <td align="right"> 

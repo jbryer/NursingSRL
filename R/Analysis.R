@@ -96,11 +96,11 @@ dev.off()
 # Build summary table of the fit statistics
 fits <- c('chisq','df','TLI','CFI','RMSEA')
 fit.stats <- data.frame(
-	MSLQ0 = as.numeric(fitMeasures(comp.fit0, fits)),
-	MSLQ2 = as.numeric(fitMeasures(comp.fit2, fits)),
-	AVSI0 = as.numeric(fitMeasures(comp.fit2, fits)),
-	AVSI2 = as.numeric(fitMeasures(comp.fit2, fits)),
-	Comp0 = as.numeric(fitMeasures(comp.fit2, fits)),
+	MSLQ0 = as.numeric(fitMeasures(mslq.fit0, fits)),
+	MSLQ2 = as.numeric(fitMeasures(mslq.fit2, fits)),
+	AVSI0 = as.numeric(fitMeasures(avsi.fit0, fits)),
+	AVSI2 = as.numeric(fitMeasures(avsi.fit2, fits)),
+	Comp0 = as.numeric(fitMeasures(comp.fit0, fits)),
 	Comp2 = as.numeric(fitMeasures(comp.fit2, fits)),
 	GPA   = as.numeric(fitMeasures(gpa.fit, fits))
 )
